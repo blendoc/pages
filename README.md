@@ -1,37 +1,14 @@
-## Welcome to GitHub Pages
 
-You can use the [editor on GitHub](https://github.com/blendoc/pages/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
+# What to expect?
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Blender is a free and open source 3D creation suite. It supports the entire 3D pipeline: modeling, rigging, animation, simulation, rendering, compositing and motion tracking, video editing and 2D animation. It’s an amazing program, with a great community and a lot - I really mean a lot - of information and tutorials. So why, another documention website?
 
-### Markdown
+Look at these pages as the log book of an explorer, one who discovers unknown territory. Magnificent views but also sometimes harsh environment. Like so many others, I wanted to give Blender a try, a few years ago. So, I downloaded the program, opened it and then after a few hours closed it, not to reopen it for the next several months. It was not that I wasn’t thrilled: looking at a floating 3D-cube that I could actually move and rotate! How cool can it be? But then, came the reality check! May be I could …? Oh? That doesn’t seem nice! May I could …? Oh, oh! There was so much to know, there were so many buttons, and sliders, and checkboxes and whatever strange terms that I’ve never heard of. Googling them made it worse: too simple, too macho, too old, too complex, too much. Blender has a steep learning curve. It’s easy to get discouraged.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Even now, after a few years of semi-intense use, I still run frequently into the old trap: “Oh, that doesn’t seem to hard; let’s do it with Blender”. And again, after many hours, I close the program with a few f-words.
 
-```markdown
-Syntax highlighted code block
+This website will tell you the stories of these explorations into deep Blender Space. From coming up with a brilliant idea (at least in my mind) to the result. Sometimes quite successful, sometimes a miserable failure. It’s the story of trying, failing, understanding why and retrying. Of course, the part of understanding is the most important. It’s the only way to learn. I will go quite deep into Blender space to understand and to explain why things work (or not work) as they do. For example, have you ever tried to use one of the color blend modes (dodge, burn, darken, …)? Did it worked as expected? And are you satisfied with the advice at various websites “to try and experiment …”?
 
-# Header 1
-## Header 2
-### Header 3
+Please, read on and explore Blender Deep Space.
 
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/blendoc/pages/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+Happy readings!

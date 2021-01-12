@@ -2,6 +2,9 @@
 
 The volume or loudness of the sound is a number between 0 and 100. The audio Volume level can be found at Audio Strip > Properties > Sound > Volume. The default value is 1. A value > 1 will amplify the sound; a value < 1 will decrease the sound level.
 
+![Volume level property panel](audio_volume_property.png)
+
+Fig 1: Volume level property in the sound panel of a sound strip
 ## 1) What's the relationship between Volume level value and loudness?
 
 You can calculate the gain or loss in decibels (dB) with the following formula:
@@ -11,13 +14,17 @@ You can calculate the gain or loss in decibels (dB) with the following formula:
 
 So, if you decrease the volume level to 0.5, this will result in a loss of -6 dB. Increasing the volume level to 100 will result in a gain of 20 x log(100) = 40 db. You can use the antilog function (10<sup>x</sup>) of a calculator to do the inverse: antilog(-6dB/20) = 0.5012.
 
+| dB loss/gain |  -40 |   -30  | -20 |  -10  |   -6  | 0 |   +6  |  +10  | +20 |  +30  | +40 |
+|--------------|:----:|:------:|:---:|:-----:|:-----:|:-:|:-----:|:-----:|:---:|:-----:|:---:|
+| Volume level | 0.01 | 0.0316 | 0.1 | 0.316 | 0.501 | 1 | 1.995 | 3.162 |  10 | 31.62 | 100 |
+
 According to psychological research, perceived loudness is doubled every 10 dB. So, to make a sound twice as loud, you have to set the volume level to antilog(+10dB/20) = 3.16. To reduce the perceived sound to half, you have to decrease the volume level to antilog(-10dB/20) = 0.316.
 
 Remember that decibel is not a linear but a logaritmic scale. This is the reason of the assymmetrical Volume slider (0 - 100) instead of 0 - 1. If you set the slider to +100, yo'll increase the loudness with 40 dB. To decrease the loudness with the same amount, you'll have to set the volume to 0.01. A handy conversion table can be found at [Wikipedia](https://en.wikipedia.org/wiki/Decibel).
 
 When a sound is digitized, the analog sound wave is sampled at discrete moments in time and the amplitude (the loudness) of the wave is stored. Two concepts are very important:
 
-* Sample rate: a typical sampling rate (audio CD) is 44.100 Hz, which means 44100 samples per second are taken. More samples results in better quality but also higher storage needs.
+* Sample rate: a typical sample rate is 44.100 Hz (audio CD quality), which means that 44100 samples per second are taken. More samples results in better quality but also higher storage needs.
 * Bit depth:  at each sample the amplitude of the analog sound wave is converted to a voltage that is stored in a number, typically a 16 or 24 bit integer. Because a 16 bit integer has only 2<sup>16</sup> = 65536 values, there will be a maximum amplitude that can be represented. These numbers are converted to a floating point number between -1 and +1. Amplitudes that exceed these thresholds (-1 or +1) will be clipped at -1 or +1  and result in distortion.
 
 The volume or loudness of a sound is a perceptual/psychological phenomenon. As such, the loudness of a sound is influenced by many factors: the amplitude of the sound wave but also the frequency (bass tones need more power), the environment (e.g. distance to the sound source), the habituation of the listener, ... To simplify the following discussion, we reduce loudness (a psychological phenomenon) to the amplitude or voltage of the sound wave (a physical phenomenon).
@@ -71,7 +78,7 @@ rms =  np.sqrt(m)
 db = 20 * math.log10(rms)
 ~~~
 
-### 2.2 dB value for a section of the strip or a trimmed strip
+### 2.2 dB value of the current frame or a section of a strip
 
 Suppose, you want the dB value for the sound samples underneath the playhead/cursor in the timeline. Audio strips however work with time code, not frames. This is the cause of many misunderstandings. For example, if you have a MP4-file (video + audio) and you change the frame-per-second parameter of the scene, then the length of the video will change but not the length of the audio strip. The duration of an audio-strip can be calculated, based on the sample rate and the number of samples.
 
@@ -92,7 +99,7 @@ nr_of_samples_per_frame = nr_of_samples/nr_of_frames
 
 In case of the open movie "Spring": duration = 464.1s, nr_of_frames = 11139 and nr_of_sample_per_frame = 1837.38. So, for each frame there are 1837 samples. To calculate the dB value underneath the playhead, we need the peak or rms value of these 1837 samples.
 
-You can access these samples with the limit-method. This method works with timecode. So, you need the start and end time code of the current frame. The calculation of the db or RMS value is the same as above.
+You can access these samples with the limit-method. This method works with timecode. So, you need the start and end time code of the current frame. These start and end times are relative to the selected strip. The first frame of the selected strip is zero. The current frame however is relative to the timeline. So, you have to subtract the strip.frame_start from the current frame. The calculation of the db or RMS value is the same as above.
 
 ~~~python
 cur_frame = bpy.context.scene.frame_current
@@ -102,15 +109,49 @@ time_to = (cur_frame - strip.frame_start) / fps
 sound_cur_frame = sound.limit(time_from, time_to)
 ~~~
 
-### 2.3. The decibel value for an animated strip
- 
-The sound data contain the raw sampled data. The volume level of a strip, however can be changed and even animated. To account for a changed volume level for the entire strip, you simply multiply this level with the raw data.
+### 2.3 The decibel value of a trimmed strip
+
+Because the Data method of a Sound object always returns all samples of the entire strip, you also have to use the limit-method (see above section 2.2) for a trimmed strip. [Trimming and cutting](../video/trimming.md) of a strip is extensively described in a separate post. Fig. 3 summarizes the different achor points.
+
+~~~python
+time_from = (strip.frame_final_start - strip.frame_start)/fps
+time_to = (strip.frame_final_end -  strip.frame_start)/fps
+sound_trimmed_strip = sound.limit(time_from, time_to)
+~~~
+
+### 2.4. The decibel value of an animated strip
+
+The sound data contain the raw sampled data. To account for a changed volume level for the entire strip, you simply multiply this level with the raw data.
 
 ~~~python
 max = sound.data().max() * strip.volume
 ~~~
 
-Of course, this will not help you if the volume level is animated. It will however work with the dB calculation per frame because the strip.volume will change if the playhead is changed due to the dependency graph.
+ The volume level of a strip, however can be changed and animated on a per frame basis. In section 2.2 you calculated the dB value for one frame. Thanks to the dependency graph, we can use the strip.volume value because this value will updated for that specific frame. So, to calculate the dB value for an entire animated strip, the easiest (but perhaps not the most efficient way) will be to loop through the strip frame by frame, set the playhead to that frame, retrieving the sound.data for the frame, multiplying it with the sound volume and cumulating these data into an array.
+
+ ~~~python
+def get_rms(samples):
+    m = np.mean(samples**2)
+    rms =  np.sqrt(m)
+    return 20 * math.log10(rms)
+
+animated_samples = np.empty(shape=[0, 1])
+for f in range (strip.frame_final_start, strip.frame_final_end):
+    bpy.context.scene.frame_set(f)
+    
+    time_from = (f - strip.frame_start - 1)/fps
+    time_to   = (f - strip.frame_start)/fps
+
+    chunk = sound.limit(time_from, time_to).data()
+    chunk = chunk * strip.volume
+    
+        
+    animated_samples = np.append(animated_samples, chunk, axis=0)
+    print("frame ", bpy.context.scene.frame_current,"time:", time_from, "-", time_to, "-",
+        "size:", len(chunk), "cum", len(animated_samples),
+        "RMS:", get_rms(chunk), "volume:" ,strip.volume)
+print("total rms: ", get_rms(animated_samples))
+~~~
 
 Some useful URL
 
